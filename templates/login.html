@@ -14,12 +14,12 @@
 
       <h2>Login</h2>
 
-      <form>
+      <form method="post">
         <label>Username:</label><br>
         <input type="text" name="username" required minlength="4" pattern="^[a-zA-Z0-9_]+$"><br><br>
 
         <label>Password:</label><br>
-        <input type="password" name="password" required minlength="6" pattern="^(?=.*[A-Z])(?=.*[0-9]).+$"><br><br>
+        <input type="password" name="password" required minlength="6"><br><br> <!-- removed for now:pattern="^(?=.*[A-Z])(?=.*[0-9]).+$"-->
 
         <button type="submit">Login</button>
       </form>
