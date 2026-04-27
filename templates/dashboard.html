@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LinkedOut - Dashboard</title>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <b>LinkedOut</b>
+    <a href="/logout">Logout</a>
+  </nav>
+
+  <hr>
+
+  <!-- Write a Post Section -->
+  <section>
+    <h3>Create a Post</h3>
+    <form method="POST" action="/dashboard">
+      <textarea name="content" rows="3" cols="60" placeholder="Share something..."></textarea>
+      <br><br>
+      <button type="submit">Post</button>
+    </form>
+  </section>
+
+  <hr>
+
+  <!-- Posts Feed Section -->
+  <section>
+    <h3>Recent Posts</h3>
+
+    <!-- Loop through every post in the database  -->
+    {% for post in posts %}
+    <article>
+      <b>{{ post.fname }}</b> &nbsp;
+      <small>{{ post.timestamp[:16] }}</small>
+      <p>{{ post.content }}</p>
+      <hr>
+    </article>
+    {% endfor %}
+
+  </section>
+
+</body>
+</html>
