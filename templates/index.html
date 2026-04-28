@@ -1,7 +1,37 @@
-<h1>home</h1>
+<!--<h1>home</h1>
 <nav> 
         <ul> 
             <li><a href="/register">register</a></li>
             <li><a href="/login">login</a></li>
-        </ul>    
-    </nav>
+        </ul>   
+
+    </nav> -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to LinkedOut</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px; }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #0073b1; 
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .btn-register { background-color: #f3f3f3; color: #666; border: 1px solid #666; }
+    </style>
+</head>
+<body>
+    <img src="/static/imges/logo.png" alt="LinkedOut Logo" style="width: 300px; height: auto; margin-bottom: 20px;">
+    <h1>Welcome to LinkedOut</h1>
+    <p>Join your professional community.</p>
+    
+    <!-- url_for links to the name of your functions in app.py -->
+    <a href='/login' class="btn">Sign In</a>
+    <a href='/register' class="btn btn-register">Join Now</a>
+</body>
+</html>

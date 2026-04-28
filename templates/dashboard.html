@@ -11,7 +11,11 @@
     <b>LinkedOut</b>
     <a href="/logout">Logout</a>
   </nav>
-
+  <hr>
+    <h1>Welcome, {{ user['fname'] }} {{ user['lname'] }}!</h1>
+      <p><strong>Username:</strong> {{ user['username'] }}</p>
+      <p><strong>Email:</strong> {{ user['email'] }}</p>
+      <p><strong>Account Role:</strong> {{ user['role'] }}</p>
   <hr>
 
   <!-- Write a Post Section -->

@@ -66,17 +66,23 @@ def login():
 
         conn = get_db_connection()
         
-        # f-strings here is VULNERABLE to SQL Injection (what what we want for this phase)
+        # f-strings here is VULNERABLE to SQL Injection (which what we want for this phase)
         user = conn.execute(f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'").fetchone()
         
         conn.close()
 
         if user: # match found
-            return f"Welcome back, {user['fname']}! You are logged in as {user['role']}."
+            #return f"Welcome back, {user['fname']}! You are logged in as {user['role']}."
+            return render_template('dashboard.html', user=user)
         else: # no match found
-            return "Invalid username or password. Please try again."
+           # return "Invalid username or password. Please try again."
+           return render_template('login.html', error="Invalid Credentials")
 
     return render_template('login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
 
 
 if __name__=="__main__": # this should be the last line
