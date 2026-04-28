@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LinkedOut Explore</title>
+</head>
+<body>
+    <header>
+        <nav>
+        <ol>
+            <li><a href="{{ url_for('dashboard') }}">DashBoard</a></li>
+            <li><a href="{{ url_for('home') }}">Logout</a></li>
+       </ol>
+    </header>
+    <!-- Loop through every post in the database  -->
+    {% for post in posts %}
+    <article>
+      <b>{{post['username'] }}</b>;
+      <p>{{ post['content']}}</p>
+       <small>{{ post['timestamp']}}</small>
+      <hr>
+      </article>
+    {% endfor %}
+     <section>
+    <h3>Create a Post</h3>
+    <form method="POST" action="/post">
+        <input type="hidden" name="uid" value="{{ user['id'] }}">
+      <textarea name="content" rows="3" cols="60" placeholder="Share something..."></textarea>
+      <br><br>
+      <button type="submit">Post</button>
+    </form>
+  </section>
+</body>
+
+
+
+</html>

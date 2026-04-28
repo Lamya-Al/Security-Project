@@ -9,7 +9,12 @@
   <!-- Navigation Bar -->
   <nav>
     <b>LinkedOut</b>
-    <a href="/logout">Logout</a>
+    <ol>
+      <li><a href="{{ url_for('post', uid=user['id']) }}">Explore</a></li>
+      <li><a href="{{ url_for('home') }}">Logout</a></li>
+
+    </ol>
+
   </nav>
   <hr>
     <h1>Welcome, {{ user['fname'] }} {{ user['lname'] }}!</h1>

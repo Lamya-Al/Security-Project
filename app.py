@@ -18,12 +18,6 @@ def get_db_connection():
     return conn
 
 
-# Function to connect to your database
-def get_db_connection():
-    conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row
-    return conn
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -53,7 +47,7 @@ def register():
         
         conn.commit()
         conn.close()
-        
+        return redirect(url_for('login'))
        # return redirect(url_for('index')) 
     
     return render_template('register.html') # we needto change this leter to make it move to anther page
@@ -80,9 +74,56 @@ def login():
 
     return render_template('login.html')
 
+
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    uid = request.args.get('uid')
+    conn = get_db_connection()
+    user = conn.execute(f"SELECT * FROM users WHERE id = {uid}").fetchone()
+    conn.close()
+    
+    if not uid:
+        return redirect(url_for('login'))
+    
+    return render_template('dashboard.html', user=user)
+
+
+
+
+@app.route("/post",methods=['GET', 'POST'])
+def post():
+    uid = request.args.get('uid') or request.form.get('uid')
+    print(f"DEBUG: The current UID is {uid}")
+    if uid is None or uid == "":
+        print("DEBUG: No UID found, redirecting to login...")
+        return redirect(url_for('login'))
+    
+
+    conn = get_db_connection()
+    user = conn.execute(f"SELECT * FROM users WHERE id = {uid}").fetchone()
+    if request.method == 'POST':
+        content = request.form.get('content')
+        if content:
+            # We add it to the database first
+            conn.execute(f"INSERT INTO post (user_id, content) VALUES ({uid}, '{content}')")
+            conn.commit()
+            #return redirect(url_for('post', uid=uid))
+            return redirect(url_for('dashboard', uid=user['id']))
+     # show all posts       
+    posts = conn.execute('''
+        SELECT post.content, post.timestamp, users.username 
+        FROM post 
+        JOIN users ON post.user_id = users.id 
+        ORDER BY post.timestamp DESC
+    ''').fetchall()
+    
+    user = conn.execute(f"SELECT * FROM users WHERE id = {uid}").fetchone()
+    conn.close()
+
+    
+    return render_template('post.html', posts=posts, user=user)
+
+
 
 
 if __name__=="__main__": # this should be the last line
