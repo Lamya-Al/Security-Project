@@ -48,6 +48,7 @@ def register():
             return "Username or password already taken. Please try again."
         
 
+
         conn.execute(f"INSERT INTO users (fname, lname, email, username, password, role) VALUES ('{fname}', '{lname}','{email}','{username}', '{password}','{role}')")
         
         conn.commit()
