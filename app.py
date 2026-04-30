@@ -78,12 +78,13 @@ def login():
 @app.route('/dashboard')
 def dashboard():
     uid = request.args.get('uid')
+    if not uid or uid == "None":
+        return redirect(url_for('login'))
     conn = get_db_connection()
     user = conn.execute(f"SELECT * FROM users WHERE id = {uid}").fetchone()
     conn.close()
     
-    if not uid:
-        return redirect(url_for('login'))
+   
     
     return render_template('dashboard.html', user=user)
 
@@ -104,11 +105,11 @@ def post():
     if request.method == 'POST':
         content = request.form.get('content')
         if content:
-            # We add it to the database first
+            #  add it to the database first
             conn.execute(f"INSERT INTO post (user_id, content) VALUES ({uid}, '{content}')")
             conn.commit()
-            #return redirect(url_for('post', uid=uid))
-            return redirect(url_for('dashboard', uid=user['id']))
+            return redirect(url_for('post', uid=uid))
+            #return redirect(url_for('dashboard', uid=user['id']))
      # show all posts       
     posts = conn.execute('''
         SELECT post.content, post.timestamp, users.username 

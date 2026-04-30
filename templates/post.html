@@ -7,7 +7,7 @@
     <header>
         <nav>
         <ol>
-            <li><a href="{{ url_for('dashboard') }}">DashBoard</a></li>
+            <li><a href="{{ url_for('dashboard',uid=user['id']) }}">DashBoard</a></li>
             <li><a href="{{ url_for('home') }}">Logout</a></li>
        </ol>
     </header>
