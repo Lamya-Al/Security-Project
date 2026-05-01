@@ -131,3 +131,9 @@ h3 {
     margin: 6px 0;
     color: #334155;
 }
+
+.container {
+    overflow-y: auto;
+    max-height: calc(100vh - 70px);
+    margin-top: 70px;
+}

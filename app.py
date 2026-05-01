@@ -80,8 +80,20 @@ def dashboard():
     uid = request.args.get('uid')
     if not uid or uid == "None":
         return redirect(url_for('login'))
+    
+    
     conn = get_db_connection()
     user = conn.execute(f"SELECT * FROM users WHERE id = {uid}").fetchone()
+    conn = get_db_connection()
+    user = conn.execute(f"SELECT * FROM users WHERE id = {uid}").fetchone()
+    posts = conn.execute('''
+        SELECT post.content, post.timestamp, users.username 
+        FROM post 
+        JOIN users ON post.user_id = users.id 
+        ORDER BY post.timestamp DESC
+    ''').fetchall()
+
+
     conn.close()
     
    
