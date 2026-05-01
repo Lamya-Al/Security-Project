@@ -20,7 +20,7 @@
     {% for post in posts %}
     <article class="post">
         <b class="username">{{ post['username'] }}</b>
-        <p class="content">{{ post['content'] }}</p>
+        <p class="content">{{ post['content'] | safe}}</p>
         <small class="time">{{ post['timestamp'] }}</small>
         <hr>
     </article>

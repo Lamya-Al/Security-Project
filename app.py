@@ -106,7 +106,7 @@ def post():
         content = request.form.get('content')
         if content:
             #  add it to the database first
-            conn.execute(f"INSERT INTO post (user_id, content) VALUES ({uid}, '{content}')")
+            conn.execute(f'INSERT INTO post (user_id, content) VALUES ({uid}, "{content}")')
             conn.commit()
             return redirect(url_for('post', uid=uid))
             #return redirect(url_for('dashboard', uid=user['id']))
