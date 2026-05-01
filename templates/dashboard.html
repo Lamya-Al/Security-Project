@@ -1,55 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>LinkedOut - Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
+
 <body>
 
-  <!-- Navigation Bar -->
-  <nav>
-    <b>LinkedOut</b>
-    <ol>
-      <li><a href="{{ url_for('post', uid=user['id']) }}">Explore</a></li>
-      <li><a href="{{ url_for('home') }}">Logout</a></li>
+<nav class="nav">
 
-    </ol>
 
-  </nav>
-  <hr>
-    <h1>Welcome, {{ user['fname'] }} {{ user['lname'] }}!</h1>
-      <p><strong>Username:</strong> {{ user['username'] }}</p>
-      <p><strong>Email:</strong> {{ user['email'] }}</p>
-      <p><strong>Account Role:</strong> {{ user['role'] }}</p>
-  <hr>
+  <div class="nav-list">
+    <a href="{{ url_for('post', uid=user['id']) }}">Explore</a>
+    <a href="{{ url_for('home') }}">Logout</a>
+  </div>
+</nav>
 
-  <!-- Write a Post Section -->
-  <section>
+<div class="container">
+
+  <div class="profile-card">
+    <h2>Welcome, {{ user['fname'] }} {{ user['lname'] }}!</h2>
+    <p><strong>Username:</strong> {{ user['username'] }}</p>
+    <p><strong>Email:</strong> {{ user['email'] }}</p>
+    <p><strong>Role:</strong> {{ user['role'] }}</p>
+  </div>
+
+  <div class="post-box">
     <h3>Create a Post</h3>
     <form method="POST" action="/dashboard">
-      <textarea name="content" rows="3" cols="60" placeholder="Share something..."></textarea>
-      <br><br>
+      <textarea name="content" placeholder="Share something..."></textarea>
       <button type="submit">Post</button>
     </form>
-  </section>
+  </div>
 
-  <hr>
-
-  <!-- Posts Feed Section -->
-  <section>
+  <div class="feed">
     <h3>Recent Posts</h3>
 
-    <!-- Loop through every post in the database  -->
     {% for post in posts %}
-    <article>
-      <b>{{ post.fname }}</b> &nbsp;
-      <small>{{ post.timestamp[:16] }}</small>
+    <div class="post">
+      <div class="post-top">
+        <span class="name">{{ post.fname }}</span>
+        <span class="time">{{ post.timestamp[:16] }}</span>
+      </div>
       <p>{{ post.content }}</p>
-      <hr>
-    </article>
+    </div>
     {% endfor %}
 
-  </section>
+  </div>
+
+</div>
 
 </body>
-</html>

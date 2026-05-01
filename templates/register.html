@@ -3,54 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <title>Register</title>
+
+  <!-- Flask CSS link -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body>
 
-<table width="100%" height="100%">
-  <tr height="60%"><td></td></tr>
+<div class="center">
+<form method="post">
 
-  <tr>
-    <td align="center">
+  <h2>Register</h2>
 
-      <h2>Register</h2>
+  <select name="role" required>
+    <option value="">Select role</option>
+    <option value="user">User</option>
+    <option value="admin">Admin</option>
+  </select>
 
-      <form method="post">
+  <input type="text" name="firstname" placeholder="First Name" required>
+  <input type="text" name="lastname" placeholder="Last Name" required>
+  <input type="email" name="email" placeholder="Email" required>
+  <input type="text" name="username" placeholder="Username" required>
+  <input type="password" name="password" placeholder="Password" required>
+  <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
 
-        <label>Role:</label><br>
-        <select name="role" required>
-          <option value="">Select role</option>
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select><br><br>
+  <button type="submit">Register</button>
 
-        <label>First Name:</label><br>
-        <input type="text" name="firstname" required minlength="2"><br><br>
+  <p><a href="{{ url_for('login') }}">Go to Login</a></p>
 
-        <label>Last Name:</label><br>
-        <input type="text" name="lastname" required minlength="2"><br><br>
-
-        <label>Email:</label><br>
-        <input type="email" name="email" required><br><br>
-
-        <label>Username:</label><br>
-        <input type="text" name="username" required minlength="4" pattern="^[a-zA-Z0-9_]+$"><br><br>
-
-        <label>Password:</label><br>
-        <input type="password" name="password" required minlength="6" ><br><br>
-
-        <label>Confirm Password:</label><br>
-        <input type="password" name="confirmPassword" required minlength="6"><br><br>
-
-        <button type="submit">Register</button>
-      </form>
-
-      <p><a href="login.html">Go to Login</a></p>
-
-    </td>
-  </tr>
-
-  <tr height="40%"><td></td></tr>
-</table>
+</form>
+</div>
 
 </body>
 </html>

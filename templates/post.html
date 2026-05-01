@@ -2,35 +2,42 @@
 <html>
 <head>
     <title>LinkedOut Explore</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <header>
-        <nav>
-        <ol>
-            <li><a href="{{ url_for('dashboard',uid=user['id']) }}">DashBoard</a></li>
+
+<header class="header">
+    <nav class="nav">
+        <ol class="nav-list">
+            <li><a href="{{ url_for('dashboard',uid=user['id']) }}">Dashboard</a></li>
             <li><a href="{{ url_for('home') }}">Logout</a></li>
-       </ol>
-    </header>
-    <!-- Loop through every post in the database  -->
+        </ol>
+    </nav>
+</header>
+
+<main class="container">
+
     {% for post in posts %}
-    <article>
-      <b>{{post['username'] }}</b>;
-      <p>{{ post['content']}}</p>
-       <small>{{ post['timestamp']}}</small>
-      <hr>
-      </article>
+    <article class="post">
+        <b class="username">{{ post['username'] }}</b>
+        <p class="content">{{ post['content'] }}</p>
+        <small class="time">{{ post['timestamp'] }}</small>
+        <hr>
+    </article>
     {% endfor %}
-     <section>
-    <h3>Create a Post</h3>
-    <form method="POST" action="/post">
-        <input type="hidden" name="uid" value="{{ user['id'] }}">
-      <textarea name="content" rows="3" cols="60" placeholder="Share something..."></textarea>
-      <br><br>
-      <button type="submit">Post</button>
-    </form>
-  </section>
+
+    <section class="create-post">
+        <h3>Create a Post</h3>
+        <form method="POST" action="/post">
+            <input type="hidden" name="uid" value="{{ user['id'] }}">
+
+            <textarea name="content" rows="3" placeholder="Share something..."></textarea>
+            <br><br>
+            <button type="submit">Post</button>
+        </form>
+    </section>
+
+</main>
+
 </body>
-
-
-
 </html>
