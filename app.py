@@ -1,5 +1,6 @@
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+import bcrypt
 
 app=Flask(__name__)
 app.secret_key = 'testKey' # this is just test
@@ -28,6 +29,7 @@ def register():
         email= request.form['email']
         username = request.form['username']
         password = request.form['password']
+        hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         role = request.form['role']
 
         # connect to the database
@@ -41,10 +43,11 @@ def register():
        # ).fetchone()
        #check if username OR email already exists (Secure):
         query = "SELECT * FROM users WHERE username = ? OR password = ?"
-        existing_check = conn.execute(query, (username, password)).fetchone()
+        existing_check = conn.execute(query, (username, hashed_password)).fetchone()
 
         if existing_check:
             conn.close()
+       # conn.execute(f"INSERT INTO users (fname, lname, email, username, password, role) VALUES ('{fname}', '{lname}','{email}','{username}', '{hashed_password}
             return render_template('register.html', error="Username or email is already taken.")
         
         #add user to the datadase ( not Secure):
@@ -83,6 +86,13 @@ def login():
         user = conn.execute(query, (username, password)).fetchone()
         conn.close()
 
+        if user and bcrypt.checkpw(password.encode(), user['password'].encode()):
+            if user['role'] == 'admin':
+                return render_template('dashboard.html', user=user)
+            else:
+                return render_template('dashboard.html', user=user)
+        else:
+            return render_template('login.html', error="Invalid Credentials")
         if user: # match found
             #return f"Welcome back, {user['fname']}! You are logged in as {user['role']}."
             session['user_id'] = user['id']
@@ -93,7 +103,6 @@ def login():
            return render_template('login.html', error="Invalid username or password.Please try again.")
 
     return render_template('login.html')
-
 
 @app.route('/dashboard')
 def dashboard():
@@ -116,7 +125,7 @@ def dashboard():
 
     conn.close()
     
-    return render_template('dashboard.html', user=user, posts=posts)
+    return render_template('dashboard.html', user=user)
 
 
 
@@ -154,6 +163,7 @@ def post():
 
     
     return render_template('post.html', posts=posts, user=user)
+
 
 # VULNERABLE - no role check
 # SECURE - role check added
