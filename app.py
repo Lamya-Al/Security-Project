@@ -1,4 +1,5 @@
 import sqlite3
+import bcrypt
 from flask import Flask, render_template, request, redirect, url_for, flash
 
 app=Flask(__name__)
@@ -28,13 +29,14 @@ def register():
         email= request.form['email']
         username = request.form['username']
         password = request.form['password']
+        hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         role = request.form['role']
 
         # connect to the database
         conn = get_db_connection()
         #check first if exsit
         existing_check = conn.execute(
-            f"SELECT * FROM users WHERE username = '{username}' OR password = '{password}'"
+            f"SELECT * FROM users WHERE username = '{username}' OR password = '{hashed_password}'"
         ).fetchone()
 
         if existing_check:
@@ -43,7 +45,7 @@ def register():
         
 
 
-        conn.execute(f"INSERT INTO users (fname, lname, email, username, password, role) VALUES ('{fname}', '{lname}','{email}','{username}', '{password}','{role}')")
+        conn.execute(f"INSERT INTO users (fname, lname, email, username, password, role) VALUES ('{fname}', '{lname}','{email}','{username}', '{hashed_password}','{role}')")
         
         conn.commit()
         conn.close()
@@ -59,22 +61,22 @@ def login():
         password = request.form['password']
 
         conn = get_db_connection()
-        
-        # f-strings here is VULNERABLE to SQL Injection (which what we want for this phase)
-        user = conn.execute(f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'").fetchone()
-        
+
+        user = conn.execute(
+            f"SELECT * FROM users WHERE username = '{username}'"
+        ).fetchone()
+
         conn.close()
 
-        if user: # match found
-            #return f"Welcome back, {user['fname']}! You are logged in as {user['role']}."
-            if user:
-             return redirect(url_for('dashboard', uid=user['id']))
-        else: # no match found
-           # return "Invalid username or password. Please try again."
-           return render_template('dashboard.html', user=user, posts=posts)
+        if user and bcrypt.checkpw(password.encode(), user['password'].encode()):
+            if user['role'] == 'admin':
+                return render_template('dashboard.html', user=user)
+            else:
+                return render_template('dashboard.html', user=user)
+        else:
+            return render_template('login.html', error="Invalid Credentials")
 
     return render_template('login.html')
-
 
 @app.route('/dashboard')
 def dashboard():
@@ -99,7 +101,7 @@ def dashboard():
     
    
     
-    return render_template('dashboard.html', user=user, posts=posts)
+    return render_template('dashboard.html', user=user)
 
 
 
@@ -137,20 +139,7 @@ def post():
     
     return render_template('post.html', posts=posts, user=user)
 
-# VULNERABLE - no role check
-# SECURE - role check added
-@app.route('/admin')
-def admin():
-    uid = request.args.get('uid')
-    conn = get_db_connection()
-    user = conn.execute(f"SELECT * FROM users WHERE id = {uid}").fetchone()
-    users = conn.execute("SELECT * FROM users").fetchall()
-    conn.close()
-    
-    if user['role'] != 'admin':
-     return render_template('access_denied.html', user=user)
-    
-    return render_template('admin.html', user=user, users=users)
+
 
 
 if __name__=="__main__": # this should be the last line
