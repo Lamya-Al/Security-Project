@@ -35,20 +35,15 @@ def register():
         # connect to the database
         conn = get_db_connection()
 
-        #check first if exsit
 
-        #()
-        #existing_check = conn.execute(
-           # f"SELECT * FROM users WHERE username = '{username}' OR password = '{password}'"
-       # ).fetchone()
-       #check if username OR email already exists (Secure):
-        query = "SELECT * FROM users WHERE username = ? OR password = ?"
-        existing_check = conn.execute(query, (username, hashed_password)).fetchone()
+       #check if username OR passwrod already exists (Secure):
+        query = "SELECT * FROM users WHERE username = ?"
+        existing_check = conn.execute(query, (username,)).fetchone()
 
         if existing_check:
             conn.close()
        # conn.execute(f"INSERT INTO users (fname, lname, email, username, password, role) VALUES ('{fname}', '{lname}','{email}','{username}', '{hashed_password}
-            return render_template('register.html', error="Username or email is already taken.")
+            return render_template('register.html', error="Username is already taken.")
         
         #add user to the datadase ( not Secure):
         #conn.execute(f"INSERT INTO users (fname, lname, email, username, password, role) VALUES ('{fname}', '{lname}','{email}','{username}', '{password}','{role}')")
@@ -58,7 +53,7 @@ def register():
                 INSERT INTO users (fname, lname, email, username, password, role) 
                 VALUES (?, ?, ?, ?, ?, ?)
                 """
-            conn.execute(insert_query, (fname, lname, email, username, password, role))
+            conn.execute(insert_query, (fname, lname, email, username, hashed_password, role))
 
             conn.commit()
             conn.close()
@@ -82,32 +77,23 @@ def login():
         # here is VULNERABLE to SQL injection (which what we want for this phase)
         #user = conn.execute(f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'").fetchone()
         # now it is secure:
-        query = "SELECT * FROM users WHERE username = ? AND password = ?"
-        user = conn.execute(query, (username, password)).fetchone()
+        query = "SELECT * FROM users WHERE username = ?"
+        user = conn.execute(query, (username,)).fetchone()
         conn.close()
 
         if user and bcrypt.checkpw(password.encode(), user['password'].encode()):
-            if user['role'] == 'admin':
-                return render_template('dashboard.html', user=user)
-            else:
-                return render_template('dashboard.html', user=user)
+                session['user_id'] = user['id']
+                session['role'] = user['role']
+                return redirect(url_for('dashboard')) #remove uid= in the URL
+
         else:
-            return render_template('login.html', error="Invalid Credentials")
-        if user: # match found
-            #return f"Welcome back, {user['fname']}! You are logged in as {user['role']}."
-            session['user_id'] = user['id']
-            session['role'] = user['role']
-            return redirect(url_for('dashboard')) #remove uid= in the URL
-        else: # no match found
-           # return "Invalid username or password. Please try again."
-           return render_template('login.html', error="Invalid username or password.Please try again.")
+            return render_template('login.html', error="Invalid username or password.Please try again.")
 
     return render_template('login.html')
 
 @app.route('/dashboard')
 def dashboard():
-    # not Secure
-    #uid = request.args.get('uid')
+    #uid = request.args.get('uid')  # not Secure
     #Secure:
     uid = session.get('user_id')
     if not uid or uid == "None":
@@ -125,7 +111,7 @@ def dashboard():
 
     conn.close()
     
-    return render_template('dashboard.html', user=user)
+    return render_template('dashboard.html', user=user, posts=posts)
 
 
 
