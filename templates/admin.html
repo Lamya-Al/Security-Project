@@ -1,0 +1,25 @@
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<nav class="nav">
+    <div class="nav-list">
+        <a href="{{ url_for('dashboard', uid=user['id']) }}">Dashboard</a>
+        <a href="{{ url_for('home') }}">Logout</a>
+    </div>
+</nav>
+<div class="container">
+    <div class="profile-card">
+        <h2>Admin Panel - All Users</h2>
+    </div>
+    {% for u in users %}
+    <div class="post-card">
+        <p><strong>{{ u['fname'] }} {{ u['lname'] }}</strong></p>
+        <p>Username: {{ u['username'] }}</p>
+        <p>Email: {{ u['email'] }}</p>
+        <p>Role: {{ u['role'] }}</p>
+        <hr>
+    </div>
+    {% endfor %}
+</div>
+</body>

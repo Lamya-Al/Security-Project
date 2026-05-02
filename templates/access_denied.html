@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Access Denied</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<nav class="nav">
+    <div class="nav-list">
+        <a href="{{ url_for('dashboard', uid=user['id']) }}">Dashboard</a>
+        <a href="{{ url_for('home') }}">Logout</a>
+    </div>
+</nav>
+<div class="container">
+    <div class="profile-card">
+        <h2 style="color: red;"> Access Denied</h2>
+        <p>You do not have permission to view this page.</p>
+        <p>This page is for admins only.</p>
+    </div>
+</div>
+</body>
+</html>

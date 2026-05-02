@@ -67,10 +67,11 @@ def login():
 
         if user: # match found
             #return f"Welcome back, {user['fname']}! You are logged in as {user['role']}."
-            return render_template('dashboard.html', user=user)
+            if user:
+             return redirect(url_for('dashboard', uid=user['id']))
         else: # no match found
            # return "Invalid username or password. Please try again."
-           return render_template('login.html', error="Invalid Credentials")
+           return render_template('dashboard.html', user=user, posts=posts)
 
     return render_template('login.html')
 
@@ -98,7 +99,7 @@ def dashboard():
     
    
     
-    return render_template('dashboard.html', user=user)
+    return render_template('dashboard.html', user=user, posts=posts)
 
 
 
@@ -136,7 +137,20 @@ def post():
     
     return render_template('post.html', posts=posts, user=user)
 
-
+# VULNERABLE - no role check
+# SECURE - role check added
+@app.route('/admin')
+def admin():
+    uid = request.args.get('uid')
+    conn = get_db_connection()
+    user = conn.execute(f"SELECT * FROM users WHERE id = {uid}").fetchone()
+    users = conn.execute("SELECT * FROM users").fetchall()
+    conn.close()
+    
+    if user['role'] != 'admin':
+     return render_template('access_denied.html', user=user)
+    
+    return render_template('admin.html', user=user, users=users)
 
 
 if __name__=="__main__": # this should be the last line

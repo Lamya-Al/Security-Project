@@ -11,6 +11,7 @@
   <div class="nav-list">
     <a href="{{ url_for('post', uid=user['id']) }}">Explore</a>
     <a href="{{ url_for('home') }}">Logout</a>
+      <a href="{{ url_for('admin', uid=user['id']) }}"> Admin Panel</a>
   </div>
 </nav>
 
