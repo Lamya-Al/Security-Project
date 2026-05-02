@@ -9,8 +9,8 @@
 <header class="header">
     <nav class="nav">
         <ol class="nav-list">
-            <li><a href="{{ url_for('dashboard',uid=user['id']) }}">Dashboard</a></li>
-            <li><a href="{{ url_for('home') }}">Logout</a></li>
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
         </ol>
     </nav>
 </header>
@@ -20,7 +20,7 @@
     {% for post in posts %}
     <article class="post">
         <b class="username">{{ post['username'] }}</b>
-        <p class="content">{{ post['content'] | safe}}</p>
+        <p class="content">{{ post['content']}}</p>
         <small class="time">{{ post['timestamp'] }}</small>
         <hr>
     </article>

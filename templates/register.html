@@ -14,7 +14,9 @@
 <form method="post">
 
   <h2>Register</h2>
-
+  {% if error %}
+    <p style="color: red; font-weight: bold;">{{ error }}</p>
+{% endif %}
   <select name="role" required>
     <option value="">Select role</option>
     <option value="user">User</option>
