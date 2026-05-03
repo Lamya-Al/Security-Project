@@ -12,7 +12,7 @@ FEATURES
 - Admin Panel showing all users
 
 
-  THIS APPLICATION SHOWS:
+THIS APPLICATION SHOWS:
   
 - SQL Injection vulnerability and fix
 - Weak Password Storage vulnerability and fix  
@@ -33,6 +33,7 @@ HOW TO RUN
    python app.py
 5. Open your browser at:
    http://127.0.0.1:5000
+
 
 TEAM MEMBERS
 - Lamya
