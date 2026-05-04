@@ -1,4 +1,5 @@
 import sqlite3
+import flask
 from flask import Flask, render_template, request, redirect, url_for, flash
 
 app=Flask(__name__)
@@ -123,7 +124,6 @@ def post():
 
     
     return render_template('post.html', posts=posts, user=user)
-
 
 
 
