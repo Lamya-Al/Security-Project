@@ -8,24 +8,38 @@ from datetime import timedelta
 app=Flask(__name__)
 app.secret_key = os.urandom(24)
 
-app.secret_key = os.urandom(24)
 
+# Configure session cookie security settings for the Flask application
 app.config.update(
+    # Prevent JavaScript from accessing the session cookie
     SESSION_COOKIE_HTTPONLY=True,
+
+    # Ensure cookies are only sent over HTTPS connections
     SESSION_COOKIE_SECURE=True,
+
+    # Control how cookies are sent with cross-site requests
+    # 'Lax' allows cookies to be sent with top-level navigation 
     SESSION_COOKIE_SAMESITE='Lax'
 )
+# Set the lifetime of a permanent session
 app.permanent_session_lifetime = timedelta(minutes=30)
 @ app.route("/")
 def home():
     return render_template("index.html")
 
 def login_required(f):
+    # This is a decorator used to protect routes that require authentication
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        # Check if the user is logged in by verifying if 'user_id' exists in session
         if 'user_id' not in session:
+            # If not logged in, redirect the user to the login page
             return redirect(url_for('login'))
+        
+        # If logged in, proceed to execute the original function
         return f(*args, **kwargs)
+    
+    # Return the wrapped function
     return decorated_function
 
 #connect with the database:
@@ -194,5 +208,7 @@ def logout():
     session.clear() # Deletes the user_id and role from the session
     return redirect(url_for('login'))
 
-if __name__=="__main__": # this should be the last line
- app.run(ssl_context='adhoc',debug=True, port=5001)
+if __name__ == "__main__":
+    # ssl_context='adhoc' enables a temporary self-signed SSL certificate (HTTPS)
+    # port=5001 sets the application to run on port 5001 instead of the default 5000
+    app.run(ssl_context='adhoc', debug=True, port=5001)
