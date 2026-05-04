@@ -9,41 +9,30 @@
 
 
   <div class="nav-list">
-    <a href="{{ url_for('post', uid=user['id']) }}">Explore</a>
+    <a href="{{ url_for('post') }}">Explore</a>
     <a href="{{ url_for('home') }}">Logout</a>
+      <a href="{{ url_for('admin') }}"> Admin Panel</a>
   </div>
 </nav>
 
 <div class="container">
 
-  <div class="profile-card">
+  <div class="post">
     <h2>Welcome, {{ user['fname'] }} {{ user['lname'] }}!</h2>
     <p><strong>Username:</strong> {{ user['username'] }}</p>
     <p><strong>Email:</strong> {{ user['email'] }}</p>
     <p><strong>Role:</strong> {{ user['role'] }}</p>
   </div>
 
-  <div class="post-box">
-    <h3>Create a Post</h3>
-    <form method="POST" action="/dashboard">
-      <textarea name="content" placeholder="Share something..."></textarea>
-      <button type="submit">Post</button>
-    </form>
-  </div>
-
-  <div class="feed">
-    <h3>Recent Posts</h3>
-
+  <h3>Recent Posts</h3>
     {% for post in posts %}
-    <div class="post">
-      <div class="post-top">
-        <span class="name">{{ post.fname }}</span>
-        <span class="time">{{ post.timestamp[:16] }}</span>
-      </div>
-      <p>{{ post.content }}</p>
+    <div class="post-card">
+        <p><strong>{{ post['username'] }}</strong></p>
+        <p>{{ post['content'] }}</p>
+        <p>{{ post['timestamp'] }}</p>
+        <hr>
     </div>
     {% endfor %}
-
   </div>
 
 </div>
