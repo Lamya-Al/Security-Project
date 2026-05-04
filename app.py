@@ -21,26 +21,13 @@ app.config.update(
     # 'Lax' allows cookies to be sent with top-level navigation 
     SESSION_COOKIE_SAMESITE='Lax'
 )
+
 # Set the lifetime of a permanent session
 app.permanent_session_lifetime = timedelta(minutes=30)
 @ app.route("/")
 def home():
     return render_template("index.html")
 
-def login_required(f):
-    # This is a decorator used to protect routes that require authentication
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        # Check if the user is logged in by verifying if 'user_id' exists in session
-        if 'user_id' not in session:
-            # If not logged in, redirect the user to the login page
-            return redirect(url_for('login'))
-        
-        # If logged in, proceed to execute the original function
-        return f(*args, **kwargs)
-    
-    # Return the wrapped function
-    return decorated_function
 
 #connect with the database:
 def get_db_connection():
@@ -123,7 +110,7 @@ def login():
     return render_template('login.html')
 
 @app.route('/dashboard')
-@login_required
+
 def dashboard():
     #uid = request.args.get('uid')  # not Secure
     #Secure:
@@ -149,7 +136,7 @@ def dashboard():
 
 
 @app.route("/post",methods=['GET', 'POST'])
-@login_required
+
 def post():
     #uid = request.args.get('uid') or request.form.get('uid')
     # ACCESS CONTROL fixed (useing session ID):
@@ -187,7 +174,7 @@ def post():
 # VULNERABLE - no role check
 # SECURE - role check added
 @app.route('/admin')
-@login_required
+
 def admin():
    # uid = request.args.get('uid')
    #fixed:
@@ -211,4 +198,4 @@ def logout():
 if __name__ == "__main__":
     # ssl_context='adhoc' enables a temporary self-signed SSL certificate (HTTPS)
     # port=5001 sets the application to run on port 5001 instead of the default 5000
-    app.run(ssl_context='adhoc', debug=True, port=5001)
+    app.run(ssl_context='adhoc', debug=True)
