@@ -33,6 +33,11 @@ HOW TO RUN
    python app.py
 5. Open your browser at:
    http://127.0.0.1:5000
+   
+ADMIN CREDENTIALS
+To test the Admin Panel, use the credentials created during the database initialization:
+ - Username: master_admin
+  -Password: 123456
 
 
 TEAM MEMBERS
