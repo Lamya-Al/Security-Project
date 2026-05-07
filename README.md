@@ -1,4 +1,4 @@
- LINKEDOUT - SECURE WEB APPLICATION
+ *LINKEDOUT - SECURE WEB APPLICATION*
  
 A simple professional social platform inspired by LinkedIn, built with Flask and SQLite. This project demonstrates common web security vulnerabilities and their mitigations.
 
@@ -20,6 +20,40 @@ THIS APPLICATION SHOWS:
 - Role-Based Access Control (RBAC) vulnerability and fix
 - Encryption using HTTPS/TLS
 
+SECURITY TESTING GUIDE
+Use the following steps to verify the security mitigations implemented in this project:
+
+1. SQL Injection (SQLi) Prevention
+Test: On the Login page, enter ' OR '1'='1' -- in the username field.
+
+Result: Access is denied.
+
+Mitigation: The app uses Parameterized Queries, ensuring the database treats inputs as data, not executable code.
+
+2. XSS (Cross-Site Scripting) Prevention
+Test: Create a post containing <script>alert('Hacked')</script>.
+
+Result: The script displays as plain text on the feed; no alert box appears.
+
+Mitigation: Jinja2 Auto-escaping sanitizes all user-generated content before rendering.
+
+
+Result: The account is created as a user.
+
+Mitigation: Role assignment is hardcoded to user on the server-side. Admins can only be created via the internal init_db.py script.
+
+3. Broken Access Control (IDOR)
+Test: Log in as a regular user and try to browse directly to https://127.0.0.1:5000/admin.
+
+Result: The server checks the Session Role and redirects the user to an "Access Denied" page.
+
+4. Password Security
+Test: Open the database.db file with a SQLite viewer.
+
+Result: Passwords are unreadable.
+
+Mitigation: Bcrypt Hashing with automatic salting ensures passwords are never stored in plain text.
+
 
 HOW TO RUN
 
@@ -37,7 +71,7 @@ HOW TO RUN
 ADMIN CREDENTIALS
 To test the Admin Panel, use the credentials created during the database initialization:
  - Username: master_admin
-  -Password: 123456
+ - Password: 123456
 
 
 TEAM MEMBERS
