@@ -3,7 +3,7 @@ import os
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import bcrypt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 # SSL imports
 from cryptography import x509
@@ -25,9 +25,9 @@ app.config.update(
 app.permanent_session_lifetime = timedelta(minutes=30)
 
 
-# =====================================================
+
 # GENERATE SELF-SIGNED SSL CERTIFICATE
-# =====================================================
+
 if not os.path.exists("cert.pem") or not os.path.exists("key.pem"):
 
     # Create private key
@@ -62,8 +62,8 @@ if not os.path.exists("cert.pem") or not os.path.exists("key.pem"):
         .issuer_name(issuer)
         .public_key(key.public_key())
         .serial_number(x509.random_serial_number())
-        .not_valid_before(datetime.utcnow())
-        .not_valid_after(datetime.utcnow() + timedelta(days=365))
+        .not_valid_before(datetime.now(UTC))
+        .not_valid_after(datetime.now(UTC) + timedelta(days=365))
         .add_extension(
             x509.SubjectAlternativeName([
                 x509.DNSName("localhost")
@@ -82,18 +82,7 @@ if not os.path.exists("cert.pem") or not os.path.exists("key.pem"):
 
 
 
-# Configure session cookie security settings for the Flask application
-app.config.update(
-    # Prevent JavaScript from accessing the session cookie
-    SESSION_COOKIE_HTTPONLY=True,
 
-    # Ensure cookies are only sent over HTTPS connections
-    SESSION_COOKIE_SECURE=True,
-
-    # Control how cookies are sent with cross-site requests
-    # 'Lax' allows cookies to be sent with top-level navigation 
-    SESSION_COOKIE_SAMESITE='Lax'
-)
 
 # Set the lifetime of a permanent session
 app.permanent_session_lifetime = timedelta(minutes=30)
@@ -121,7 +110,7 @@ def register():
         username = request.form['username']
         password = request.form['password']
         hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-        role = "user"
+        role = request.form['role']
 
         # connect to the database
         conn = get_db_connection()
