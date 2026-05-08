@@ -3,10 +3,83 @@ import os
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import bcrypt
-from datetime import timedelta
+from datetime import datetime, timedelta
 
-app=Flask(__name__)
+# SSL imports
+from cryptography import x509
+from cryptography.x509.oid import NameOID
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+
+app = Flask(__name__)
 app.secret_key = os.urandom(24)
+
+# Configure session cookie security settings
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SAMESITE='Lax'
+)
+
+# Session lifetime
+app.permanent_session_lifetime = timedelta(minutes=30)
+
+
+# =====================================================
+# GENERATE SELF-SIGNED SSL CERTIFICATE
+# =====================================================
+if not os.path.exists("cert.pem") or not os.path.exists("key.pem"):
+
+    # Create private key
+    key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=4096
+    )
+
+    # Save private key
+    with open("key.pem", "wb") as f:
+        f.write(
+            key.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.TraditionalOpenSSL,
+                encryption_algorithm=serialization.NoEncryption()
+            )
+        )
+
+    # Certificate details
+    subject = issuer = x509.Name([
+        x509.NameAttribute(NameOID.COUNTRY_NAME, "SA"),
+        x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "Riyadh"),
+        x509.NameAttribute(NameOID.LOCALITY_NAME, "Riyadh"),
+        x509.NameAttribute(NameOID.ORGANIZATION_NAME, "Secure Flask App"),
+        x509.NameAttribute(NameOID.COMMON_NAME, "localhost"),
+    ])
+
+    # Create certificate
+    cert = (
+        x509.CertificateBuilder()
+        .subject_name(subject)
+        .issuer_name(issuer)
+        .public_key(key.public_key())
+        .serial_number(x509.random_serial_number())
+        .not_valid_before(datetime.utcnow())
+        .not_valid_after(datetime.utcnow() + timedelta(days=365))
+        .add_extension(
+            x509.SubjectAlternativeName([
+                x509.DNSName("localhost")
+            ]),
+            critical=False,
+        )
+        .sign(key, hashes.SHA256())
+    )
+
+    # Save certificate
+    with open("cert.pem", "wb") as f:
+        f.write(cert.public_bytes(serialization.Encoding.PEM))
+
+    print("SSL certificate generated successfully!")
+
+
 
 
 # Configure session cookie security settings for the Flask application
@@ -196,6 +269,10 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == "__main__":
-    # ssl_context='adhoc' enables a temporary self-signed SSL certificate (HTTPS)
-    # port=5001 sets the application to run on port 5001 instead of the default 5000
-    app.run(ssl_context='adhoc', debug=True)
+
+    app.run(
+        host='127.0.0.1',
+        port=5001,
+        debug=True,
+        ssl_context=('cert.pem', 'key.pem')
+    )
