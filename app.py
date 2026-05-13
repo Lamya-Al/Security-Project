@@ -110,7 +110,8 @@ def register():
         username = request.form['username']
         password = request.form['password']
         hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-        role = request.form['role']
+        #role = request.form['role']
+        role = 'user'
 
         # connect to the database
         conn = get_db_connection()
