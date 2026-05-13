@@ -110,7 +110,8 @@ def register():
         username = request.form['username']
         password = request.form['password']
         hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-        role = request.form['role']
+        #role = request.form['role']
+        role = 'user'
 
         # connect to the database
         conn = get_db_connection()
@@ -174,25 +175,37 @@ def login():
 @app.route('/dashboard')
 
 def dashboard():
-    #uid = request.args.get('uid')  # not Secure
-    #Secure:
+
+    # Secure session-based authentication
     uid = session.get('user_id')
+
     if not uid or uid == "None":
         return redirect(url_for('login'))
-    
-    
+
     conn = get_db_connection()
-    user = conn.execute("SELECT * FROM users WHERE id = ?",(uid,)).fetchone()
+
+    # Get current user information
+    user = conn.execute(
+        "SELECT * FROM users WHERE id = ?",
+        (uid,)
+    ).fetchone()
+
+    # Get ONLY this user's posts
     posts = conn.execute('''
         SELECT post.content, post.timestamp, users.username 
         FROM post 
         JOIN users ON post.user_id = users.id 
+        WHERE post.user_id = ?
         ORDER BY post.timestamp DESC
-    ''').fetchall()
+    ''', (uid,)).fetchall()
 
     conn.close()
-    
-    return render_template('dashboard.html', user=user, posts=posts)
+
+    return render_template(
+        'dashboard.html',
+        user=user,
+        posts=posts
+    )
 
 
 
